@@ -1,11 +1,17 @@
 const router = require("express").Router();
+const bcrypt = require("bcrypt");
 const { User } = require("../models/user");
 const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../utils/generateAuthToken");
+const isAuth = require("../middlewares/isAuth");
 const { loginValidation } = require("../validators/auth");
-const bcrypt = require("bcrypt");
+
+router.get("/", isAuth, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).send({ data: user, message: "Logged in user" });
+});
 
 router.post("/login", async (req, res) => {
   try {
